@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant de Recrutement</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 24px;
+        }
+
+        .header-content {
+            max-width: 768px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-icon {
+            background: linear-gradient(135deg, #fbbf24 0%, #f97316 100%);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* Messages area */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px 24px;
+        }
+
+        .messages-wrapper {
+            max-width: 768px;
+            margin: 0 auto;
+        }
+
+        .message {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            align-items: flex-start;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .avatar-assistant {
+            background: linear-gradient(135deg, #fbbf24 0%, #f97316 100%);
+            color: white;
+        }
+
+        .avatar-user {
+            background: #2563eb;
+            color: white;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-sender {
+            font-size: 13px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .message-text {
+            color: #374151;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .message-text strong {
+            font-weight: 600;
+            color: #111827;
+            display: block;
+            margin-top: 12px;
+            margin-bottom: 4px;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 4px;
+            padding: 8px 0;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #9ca3af;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Input area */
+        .input-container {
+            border-top: 1px solid #e5e7eb;
+            padding: 16px 24px;
+            background: white;
+        }
+
+        .input-wrapper {
+            max-width: 768px;
+            margin: 0 auto;
+        }
+
+        .input-box {
+            position: relative;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px 50px 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            min-height: 52px;
+            max-height: 200px;
+        }
+
+        textarea:focus {
+            border-color: #fbbf24;
+            box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
+        }
+
+        .send-button {
+            position: absolute;
+            right: 8px;
+            bottom: 8px;
+            background: #111827;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .send-button:hover:not(:disabled) {
+            background: #1f2937;
+        }
+
+        .send-button:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .footer-text {
+            text-align: center;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+
+        /* Scrollbar styling */
+        .messages-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .messages-container::-webkit-scrollbar-track {
+            background: #f3f4f6;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="header-icon">✨</div>
+                <div class="header-title">Assistant de Recrutement</div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="messages-container" id="messagesContainer">
+            <div class="messages-wrapper" id="messagesWrapper"></div>
+        </div>
+
+        <!-- Input -->
+        <div class="input-container">
+            <div class="input-wrapper">
+                <div class="input-box">
+                    <textarea 
+                        id="messageInput" 
+                        placeholder="Posez votre question sur le recrutement..."
+                        rows="1"
+                    ></textarea>
+                    <button class="send-button" id="sendButton" onclick="sendMessage()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+                <div class="footer-text">Assistant IA pour le recrutement</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const jobSkills = {
+            'développeur frontend': {
+                techniques: ['HTML5', 'CSS3', 'JavaScript (ES6+)', 'React/Vue/Angular', 'TypeScript', 'Responsive Design', 'Git/GitHub', 'APIs REST', 'Webpack/Vite'],
+                soft: ['Attention aux détails', 'Créativité', 'Communication', 'Travail en équipe', 'Résolution de problèmes'],
+                questions: [
+                    'Expliquez la différence entre let, const et var en JavaScript',
+                    'Comment optimisez-vous les performances d\'une application React ?',
+                    'Qu\'est-ce que le Virtual DOM et comment fonctionne-t-il ?',
+                    'Décrivez votre expérience avec le responsive design'
+                ]
+            },
+            'développeur backend': {
+                techniques: ['Node.js/Python/Java', 'Bases de données (SQL/NoSQL)', 'APIs RESTful/GraphQL', 'Docker', 'Architecture microservices', 'Sécurité web', 'Tests unitaires', 'CI/CD'],
+                soft: ['Pensée logique', 'Rigueur', 'Documentation', 'Optimisation', 'Travail d\'équipe'],
+                questions: [
+                    'Expliquez la différence entre SQL et NoSQL',
+                    'Comment gérez-vous l\'authentification et l\'autorisation ?',
+                    'Qu\'est-ce qu\'une architecture RESTful ?',
+                    'Comment optimisez-vous les requêtes de base de données ?'
+                ]
+            },
+            'développeur fullstack': {
+                techniques: ['Frontend (React/Vue/Angular)', 'Backend (Node.js/Python/Java)', 'Bases de données', 'DevOps basics', 'Git', 'APIs', 'Architecture logicielle'],
+                soft: ['Polyvalence', 'Apprentissage rapide', 'Communication', 'Vision globale', 'Autonomie'],
+                questions: [
+                    'Décrivez un projet fullstack que vous avez réalisé',
+                    'Comment structurez-vous une application complète ?',
+                    'Quelle est votre approche pour le débogage ?',
+                    'Comment gérez-vous l\'état dans vos applications ?'
+                ]
+            },
+            'data scientist': {
+                techniques: ['Python/R', 'Machine Learning', 'Statistiques', 'SQL', 'Pandas/NumPy', 'Visualisation (Matplotlib/Plotly)', 'TensorFlow/PyTorch', 'Big Data'],
+                soft: ['Pensée analytique', 'Communication des résultats', 'Curiosité', 'Rigueur scientifique', 'Business acumen'],
+                questions: [
+                    'Expliquez la différence entre régression et classification',
+                    'Comment traitez-vous les données manquantes ?',
+                    'Qu\'est-ce que l\'overfitting et comment l\'éviter ?',
+                    'Décrivez un projet de Machine Learning que vous avez réalisé'
+                ]
+            }
+        };
+
+        let messages = [];
+
+        function addMessage(role, content) {
+            messages.push({ role, content });
+            renderMessages();
+        }
+
+        function renderMessages() {
+            const wrapper = document.getElementById('messagesWrapper');
+            wrapper.innerHTML = messages.map(msg => {
+                const isAssistant = msg.role === 'assistant';
+                const formattedContent = formatMessage(msg.content);
+                
+                return `
+                    <div class="message">
+                        <div class="avatar ${isAssistant ? 'avatar-assistant' : 'avatar-user'}">
+                            ${isAssistant ? '🤖' : '👤'}
+                        </div>
+                        <div class="message-content">
+                            <div class="message-sender">${isAssistant ? 'Assistant' : 'Vous'}</div>
+                            <div class="message-text">${formattedContent}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            scrollToBottom();
+        }
+
+        function formatMessage(text) {
+            return text
+                .split('\n')
+                .map(line => {
+                    if (line.startsWith('**') && line.endsWith('**')) {
+                        return `<strong>${line.slice(2, -2)}</strong>`;
+                    }
+                    if (line.includes('**')) {
+                        return line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    }
+                    return line || '&nbsp;';
+                })
+                .join('<br>');
+        }
+
+        function detectJobType(text) {
+            const lowerText = text.toLowerCase();
+            for (const job in jobSkills) {
+                if (lowerText.includes(job)) {
+                    return job;
+                }
+            }
+            return null;
+        }
+
+        function generateResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+            const jobType = detectJobType(userMessage);
+
+            if ((lowerMessage.includes('compétence') || lowerMessage.includes('skill')) && jobType) {
+                const skills = jobSkills[jobType];
+                return `Pour un poste de **${jobType}**, voici les compétences essentielles :
+
+**Compétences Techniques :**
+${skills.techniques.map((s, i) => `${i + 1}. ${s}`).join('\n')}
+
+**Compétences Comportementales :**
+${skills.soft.map((s, i) => `${i + 1}. ${s}`).join('\n')}
+
+Souhaitez-vous que je vous pose des questions d'interview ?`;
+            }
+
+            if ((lowerMessage.includes('question') || lowerMessage.includes('interview')) && jobType) {
+                const skills = jobSkills[jobType];
+                return `Voici des questions d'interview pour un **${jobType}** :
+
+${skills.questions.map((q, i) => `**Question ${i + 1} :** ${q}`).join('\n\n')}`;
+            }
+
+            if (lowerMessage.includes('poste') || lowerMessage.includes('métier')) {
+                return `Je peux vous aider avec les postes suivants :
+
+• Développeur Frontend
+• Développeur Backend
+• Développeur Fullstack
+• Data Scientist
+
+Pour quel poste souhaitez-vous des informations ?`;
+            }
+
+            return `Je peux vous aider avec :
+• Les compétences requises pour différents postes
+• Des questions d'interview adaptées
+
+Par exemple : "Quelles sont les compétences pour développeur frontend ?"`;
+        }
+
+        function showLoading() {
+            const wrapper = document.getElementById('messagesWrapper');
+            wrapper.innerHTML += `
+                <div class="message" id="loadingMessage">
+                    <div class="avatar avatar-assistant">🤖</div>
+                    <div class="message-content">
+                        <div class="message-sender">Assistant</div>
+                        <div class="loading-dots">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            scrollToBottom();
+        }
+
+        function hideLoading() {
+            const loading = document.getElementById('loadingMessage');
+            if (loading) loading.remove();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            addMessage('user', message);
+            input.value = '';
+            input.style.height = 'auto';
+
+            showLoading();
+
+            setTimeout(() => {
+                hideLoading();
+                const response = generateResponse(message);
+                addMessage('assistant', response);
+            }, 500);
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('messagesContainer');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Event listeners
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Auto-resize textarea
+        document.getElementById('messageInput').addEventListener('input', (e) => {
+            e.target.style.height = 'auto';
+            e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
+        });
+
+        // Message initial
+        addMessage('assistant', 'Bonjour ! Je suis votre assistant de recrutement. Je peux vous aider à comprendre les compétences requises pour différents postes, poser des questions d\'interview, ou évaluer des candidats. Comment puis-je vous aider ?');
+    </script>
+</body>
+</html>

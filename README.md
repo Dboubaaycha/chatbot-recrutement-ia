@@ -1,3 +1,45 @@
+# 🤖 Chatbot de Recrutement IA
+
+Assistant intelligent pour le recrutement propulsé par Groq AI.
+
+## 🚀 Fonctionnalités
+
+- ✅ Chatbot IA conversationnel
+- ✅ Conseils sur les compétences requises
+- ✅ Questions d'interview
+- ✅ Export des conversations en PDF
+- ✅ Interface moderne et responsive
+- ✅ 100% gratuit avec Groq API
+
+## 📦 Installation
+```bash
+# Cloner le projet
+git clone https://github.com/votre-username/chatbot-recrutement-ia.git
+
+# Installer les dépendances
+npm install
+
+# Lancer l'application
+npm start
+```
+
+## 🔑 Configuration
+
+1. Obtenez une clé API gratuite sur [console.groq.com](https://console.groq.com/)
+2. Cliquez sur l'icône ⚙️ dans l'application
+3. Collez votre clé API
+
+## 🛠️ Technologies utilisées
+
+- React.js
+- Tailwind CSS
+- Groq API (Llama 3.3 70B)
+- jsPDF
+- Lucide React Icons
+
+## 📝 Licence
+
+MIT
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -68,3 +110,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
