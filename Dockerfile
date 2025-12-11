@@ -6,8 +6,9 @@ WORKDIR /app
 # Copier les fichiers package.json et package-lock.json
 COPY package*.json ./
 
-# Installer les dépendances
-RUN npm ci --only=production
+# IMPORTANT : Installer TOUTES les dépendances (y compris devDependencies)
+# car Tailwind CSS est nécessaire pour le build
+RUN npm ci
 
 # Copier tout le code source
 COPY . .
@@ -20,9 +21,6 @@ FROM nginx:alpine
 
 # Copier le build depuis l'étape précédente
 COPY --from=builder /app/build /usr/share/nginx/html
-
-# Copier une configuration Nginx personnalisée (optionnel)
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Exposer le port 80
 EXPOSE 80
