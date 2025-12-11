@@ -6,8 +6,9 @@ WORKDIR /app
 # Copier les fichiers de dépendances
 COPY package*.json ./
 
-# Installer les dépendances
-RUN npm ci --only=production
+# Installer TOUTES les dépendances (production + dev)
+# Car Tailwind et les outils de build sont dans devDependencies
+RUN npm ci
 
 # Copier tout le code source
 COPY . .
