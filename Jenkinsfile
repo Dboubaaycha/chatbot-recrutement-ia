@@ -1,13 +1,11 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:18'
+        }
+    }
 
     stages {
-        stage('Clone') {
-            steps {
-                git branch: 'main', url: 'https://github.com/Dboubaaycha/chatbot-recrutement-ia.git'
-            }
-        }
-
         stage('Install') {
             steps {
                 sh 'npm install'
