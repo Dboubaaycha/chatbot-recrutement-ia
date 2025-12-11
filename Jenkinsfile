@@ -10,14 +10,6 @@ pipeline {
     }
     
     stages {
-        stage('🔍 Clone Repository') {
-            steps {
-                script {
-                    echo "Clonage du repository depuis GitHub..."
-                    git branch: "${BRANCH}", url: "${REPO_URL}"
-                }
-            }
-        }
         
         stage('🐳 Build Docker Image') {
             steps {
