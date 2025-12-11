@@ -7,9 +7,16 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/Dboubaaycha/chatbot-recrutement-ia.git'
             }
         }
-        stage('Build') {
+
+        stage('Install') {
             steps {
-                echo 'Build successful!'
+                sh 'npm install'
+            }
+        }
+
+        stage('Run App') {
+            steps {
+                sh 'npm start &'
             }
         }
     }
