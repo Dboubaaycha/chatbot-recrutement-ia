@@ -21,8 +21,16 @@ FROM nginx:alpine
 # Copier le build React
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Copier une configuration Nginx personnalisée (optionnel)
-COPY nginx.conf /etc/nginx/conf.d/default.conf 2>/dev/null || true
+# Configuration Nginx par défaut pour React SPA
+RUN echo 'server { \
+    listen 80; \
+    server_name localhost; \
+    root /usr/share/nginx/html; \
+    index index.html; \
+    location / { \
+        try_files $uri $uri/ /index.html; \
+    } \
+}' > /etc/nginx/conf.d/default.conf
 
 # Exposer le port 80
 EXPOSE 80
